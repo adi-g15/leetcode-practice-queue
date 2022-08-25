@@ -12,7 +12,7 @@ fn get_store_filepath() -> PathBuf {
 }
 
 
-fn get_queue() -> VecDeque<String> {
+pub fn get_queue() -> VecDeque<String> {
     let mut queue = VecDeque::new();
 
     let store_filepath = get_store_filepath();
@@ -27,7 +27,7 @@ fn get_queue() -> VecDeque<String> {
     queue
 }
 
-fn save_queue(queue: VecDeque<String>) -> Result<(),io::Error> {
+pub fn save_queue(queue: VecDeque<String>) -> Result<(),io::Error> {
     let store_filepath = get_store_filepath();
 
     let content = queue.iter().fold(String::new(), |acc, item| acc + "\n" + item);
