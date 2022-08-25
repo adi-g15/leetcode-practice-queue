@@ -1,9 +1,10 @@
 use std::io;
 
-use leetcode_practice_queue::{get_queue, save_queue};
+use leetcode_practice_queue::FileStore;
 
-fn main() -> Result<(), io::Error> {
-    let mut queue = get_queue();
+fn main() -> io::Result<()> {
+    let mut store = FileStore::open()?;
+    let mut queue = store.get_queue()?;
 
     if queue.is_empty() {
         println!("practice Queue is empty");
@@ -12,10 +13,11 @@ fn main() -> Result<(), io::Error> {
 
     let popped = queue.pop_front();
 
-    save_queue(queue)?;
+    store.save_queue(queue)?;
 
     // SAFETY: Already ensured that queue was not empty, so popped must be Some
     println!("Popped: {}", popped.unwrap());
 
     Ok(())
 }
+// ex: shiftwidth=4 expandtab:

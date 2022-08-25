@@ -1,10 +1,11 @@
 extern crate wild;
 use std::io;
 
-use leetcode_practice_queue::{get_queue, save_queue};
+use leetcode_practice_queue::FileStore;
 
-fn main() -> Result<(), io::Error> {
-    let mut queue = get_queue();
+fn main() -> io::Result<()> {
+    let mut store = FileStore::open()?;
+    let mut queue = store.get_queue()?;
 
     if queue.is_empty() {
         println!("practice Queue is empty");
@@ -17,9 +18,10 @@ fn main() -> Result<(), io::Error> {
     // Push to the end
     queue.push_back(popped.clone());
 
-    save_queue(queue)?;
+    store.save_queue(queue)?;
 
     println!("Snoozed: {}", popped);
 
     Ok(())
 }
+// ex: shiftwidth=4 expandtab:

@@ -1,9 +1,9 @@
 extern crate wild;
 use std::io;
 
-use leetcode_practice_queue::{get_queue, save_queue};
+use leetcode_practice_queue::FileStore;
 
-fn main() -> Result<(), io::Error> {
+fn main() -> io::Result<()> {
     // Skipping 1st argument as it contains executable path
     let urls = wild::args().skip(1);
 
@@ -12,16 +12,18 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
-    let mut queue = get_queue();
+    let mut store = FileStore::open()?;
+    let mut queue = store.get_queue()?;
 
     for url in urls {
         queue.push_back(url);
     };
 
     let len = queue.len();
-    save_queue(queue)?;
+    store.save_queue(queue)?;
 
     println!("Current Length: {}", len);
 
     Ok(())
 }
+// ex: shiftwidth=4 expandtab:

@@ -21,5 +21,6 @@ name="lcsnooze"
 path="src/bin/lcsnooze.rs"
 
 [dependencies]
+fs2 = "0.4.3"
 wild = "2.1.0"
 xdg = "2.4.1"

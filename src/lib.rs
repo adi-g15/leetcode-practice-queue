@@ -1,5 +1,7 @@
-use std::{collections::VecDeque, io, path::PathBuf, fs};
+use std::{collections::VecDeque, io, path::PathBuf, fs::{self, File}};
 use xdg::BaseDirectories;
+use fs2::FileExt;
+use io::{Read, Write};
 
 fn get_store_filepath() -> PathBuf {
     let xdg_dirs = BaseDirectories::with_prefix("lc-practice-queue").unwrap();
@@ -11,27 +13,60 @@ fn get_store_filepath() -> PathBuf {
     data_dir
 }
 
+pub struct FileStore {
+    file: File,
+    locked: bool
+}
 
-pub fn get_queue() -> VecDeque<String> {
-    let mut queue = VecDeque::new();
+impl FileStore {
+    pub fn open() -> io::Result<Self> {
+        let filepath = get_store_filepath();
+        if !filepath.exists() {
+            fs::create_dir_all(filepath.parent().unwrap())?;
+            File::create(&filepath)?;
+        }
 
-    let store_filepath = get_store_filepath();
+        let file = File::open(&filepath)?;
 
-    let lines = fs::read_to_string(&store_filepath)
-        .expect(&format!("Unable to read {:?}!", &store_filepath));
-    
-    for line in lines.lines() {
-        queue.push_back(line.to_string());
+        // Lock the file since we may be writing to it
+        file.lock_exclusive()?;
+
+        Ok(FileStore { file, locked: true })
     }
 
-    queue
+    pub fn get_queue(&mut self) -> io::Result<VecDeque<String>> {
+        let mut queue = VecDeque::new();
+
+        let mut lines = String::new();
+        self.file.read_to_string(&mut lines)?;
+    
+        for line in lines.lines() {
+            queue.push_back(line.to_string());
+        }
+
+        Ok(queue)
+    }
+
+    pub fn save_queue(&mut self, queue: VecDeque<String>) -> Result<(),io::Error> {
+        let content = queue.iter().fold(String::new(), |acc, item| acc + "\n" + item);
+
+        self.file.write_all(content.as_bytes())
+    }
+
+    pub fn close(&mut self) -> io::Result<()> {
+        // Release the file lock
+        self.file.unlock()?;
+        self.locked = false;
+        Ok(())
+    }
 }
 
-pub fn save_queue(queue: VecDeque<String>) -> Result<(),io::Error> {
-    let store_filepath = get_store_filepath();
-
-    let content = queue.iter().fold(String::new(), |acc, item| acc + "\n" + item);
-
-    fs::write(store_filepath, content)
+impl Drop for FileStore {
+    fn drop(&mut self) {
+        if self.locked {
+            self.close().unwrap();
+        }
+    }
 }
 
+// ex: shiftwidth=4 expandtab:

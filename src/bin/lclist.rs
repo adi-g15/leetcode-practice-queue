@@ -1,9 +1,10 @@
 use std::io;
 
-use leetcode_practice_queue::get_queue;
+use leetcode_practice_queue::FileStore;
 
-fn main() {
-    let mut queue = get_queue();
+fn main() -> io::Result<()> {
+    let mut store = FileStore::open()?;
+    let queue = store.get_queue()?;
 
     if queue.is_empty() {
         println!("No practices :D");
@@ -12,4 +13,8 @@ fn main() {
             println!("{}. {}", i + 1, practice);
         }
     }
+
+    Ok(())
 }
+
+// ex: shiftwidth=4 expandtab:
