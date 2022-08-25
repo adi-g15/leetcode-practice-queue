@@ -1,6 +1,10 @@
 ## Leetcode practice Queue
 
-Keeps track of your practice list of leetcode. Works like a queue, do it in order, or snooze/postpone the top to end.
+![leetcode-practice-queue](https://socialify.git.ci/adi-g15/leetcode-practice-queue/image?description=1&descriptionEditable=Keeps%20track%20of%20your%20%27to%20practice%27%20list%20of%20leetcode%20questions&language=1&name=1&owner=1&theme=Dark)
+
+Keeps track of your 'to practice' list of leetcode questions.
+
+Works like a queue, do it in order, or snooze/postpone the top to end.
 
 ### Usage
 
