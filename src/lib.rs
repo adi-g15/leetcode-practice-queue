@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, io, path::PathBuf, fs::{self, File}};
+use std::{collections::VecDeque, io::{self, Seek, BufReader}, path::PathBuf, fs::{self, File, OpenOptions}};
 use xdg::BaseDirectories;
 use fs2::FileExt;
 use io::{Read, Write};
@@ -23,10 +23,14 @@ impl FileStore {
         let filepath = get_store_filepath();
         if !filepath.exists() {
             fs::create_dir_all(filepath.parent().unwrap())?;
-            File::create(&filepath)?;
+            fs::File::create(&filepath)?;
         }
 
-        let file = File::open(&filepath)?;
+        let file = OpenOptions::new()
+            .write(true)
+            .read(true)
+            .truncate(false)        // Don't truncate the file yet, since it contains the queue
+            .open(filepath)?;
 
         // Lock the file since we may be writing to it
         file.lock_exclusive()?;
@@ -38,9 +42,12 @@ impl FileStore {
         let mut queue = VecDeque::new();
 
         let mut lines = String::new();
-        self.file.read_to_string(&mut lines)?;
-    
+        let mut buf_reader = BufReader::new(&mut self.file);
+        buf_reader.read_to_string(&mut lines)?;
+ 
         for line in lines.lines() {
+            if line.is_empty() { continue; }
+
             queue.push_back(line.to_string());
         }
 
@@ -48,7 +55,13 @@ impl FileStore {
     }
 
     pub fn save_queue(&mut self, queue: VecDeque<String>) -> Result<(),io::Error> {
-        let content = queue.iter().fold(String::new(), |acc, item| acc + "\n" + item);
+        let content = queue.iter().fold(String::new(), |acc, item| acc + item + "\n");
+
+        // .set_len(0) to clear out the earlier content
+        self.file.set_len(0)?;
+
+        // .set_len doesn't reset the file's cursors, so using seek
+        self.file.seek(io::SeekFrom::Start(0))?;
 
         self.file.write_all(content.as_bytes())
     }
