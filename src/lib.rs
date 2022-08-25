@@ -2,11 +2,11 @@ use std::{collections::VecDeque, io, path::PathBuf, fs};
 use xdg::BaseDirectories;
 
 fn get_store_filepath() -> PathBuf {
-    let xdg_dirs = BaseDirectories::with_prefix("lc-todo-queue").unwrap();
+    let xdg_dirs = BaseDirectories::with_prefix("lc-practice-queue").unwrap();
 
     // SAFETY: If .unwrap() fails, we can assume something wrong with user's config files
     //         and we can safely panic.
-    let data_dir = xdg_dirs.place_data_file("todo.txt").unwrap();
+    let data_dir = xdg_dirs.place_data_file("practice.txt").unwrap();
 
     data_dir
 }

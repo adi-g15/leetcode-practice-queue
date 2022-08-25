@@ -1,7 +1,7 @@
 extern crate wild;
 use std::io;
 
-use leetcode_todo_queue::{get_queue, save_queue};
+use leetcode_practice_queue::{get_queue, save_queue};
 
 fn main() -> Result<(), io::Error> {
     // Skipping 1st argument as it contains executable path

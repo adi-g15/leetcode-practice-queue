@@ -1,13 +1,13 @@
 extern crate wild;
 use std::io;
 
-use leetcode_todo_queue::{get_queue, save_queue};
+use leetcode_practice_queue::{get_queue, save_queue};
 
 fn main() -> Result<(), io::Error> {
     let mut queue = get_queue();
 
     if queue.is_empty() {
-        println!("TODO Queue is empty");
+        println!("practice Queue is empty");
         return Ok(());
     }
 

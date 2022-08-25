@@ -1,6 +1,6 @@
-## Leetcode TODO Queue
+## Leetcode practice Queue
 
-Keeps track of your todo list of leetcode. Works like a queue, do it in order, or snooze/postpone the top to end.
+Keeps track of your practice list of leetcode. Works like a queue, do it in order, or snooze/postpone the top to end.
 
 ### Usage
 
@@ -23,7 +23,7 @@ lcpop
 ```sh
 lclist
 
-# List the todo questions in order
+# List the practice questions in order
 ```
 
 4. Snooze
